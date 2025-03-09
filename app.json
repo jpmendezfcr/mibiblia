@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "MiBiblia",
+    "slug": "MiBiblia",
+    "version": "1.0.1",
+    "orientation": "portrait",
+    "sdkVersion": "48.0.18",
+    "platforms": [
+      "android",
+      "web"
+    ],
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
