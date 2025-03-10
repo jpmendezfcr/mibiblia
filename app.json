@@ -4,7 +4,7 @@
     "slug": "MiBiblia",
     "version": "1.0.1",
     "orientation": "portrait",
-    "sdkVersion": "48.0.18",
+    "sdkVersion": "48.0.0",
     "platforms": [
       "android",
       "web"

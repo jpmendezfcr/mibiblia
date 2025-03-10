@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -94,31 +95,38 @@ export default function App() {
   useEffect(() => {
     async function prepare() {
       try {
+        console.log('Starting app initialization...');
+        
         // Keep the splash screen visible while we fetch resources
         await SplashScreen.preventAutoHideAsync();
+        console.log('Splash screen prevented from auto-hiding');
 
-        // Pre-load fonts, make API calls, etc.
+        // Pre-load any resources, make API calls, etc.
         // Add any initialization logic here
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Give time for resources to load
-
-        // Tell the application to render
+        await new Promise(resolve => setTimeout(resolve, 100)); // Small delay to ensure resources are loaded
+        
+        console.log('App initialization complete');
         setAppIsReady(true);
-      } catch (e) {
-        console.warn(e);
-        setError('Error initializing app');
+      } catch (error: any) {
+        console.error('Error during initialization:', error);
+        setError('Error initializing app: ' + error.message);
       }
     }
 
     prepare();
   }, []);
 
-  // Handle app ready state
-  useEffect(() => {
+  const onLayoutRootView = React.useCallback(async () => {
     if (appIsReady) {
-      // This tells the splash screen to hide immediately
-      // If we call this after `setAppIsReady`, then we may see a blank screen while the app is loading its initial state
-      // This is also why we have a loading fallback component below
-      SplashScreen.hideAsync().catch(console.warn);
+      try {
+        console.log('Attempting to hide splash screen...');
+        await SplashScreen.hideAsync();
+        console.log('Splash screen hidden successfully');
+      } catch (error: any) {
+        console.error('Error hiding splash screen:', error);
+        // Even if hiding splash screen fails, we want to show the app
+        setError(null);
+      }
     }
   }, [appIsReady]);
 
@@ -193,7 +201,8 @@ export default function App() {
   }
 
   return (
-    <SafeAreaProvider style={styles.container}>
+    <SafeAreaProvider style={styles.container} onLayout={onLayoutRootView}>
+      <StatusBar style="auto" />
       <LanguageProvider>
         <ThemeProvider>
           <FavoriteContextProvider>
