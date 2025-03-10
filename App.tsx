@@ -86,12 +86,42 @@ function TabNavigator() {
   );
 }
 
-export default function App() {  const [error, setError] = useState(null);
+export default function App() {
+  const [error, setError] = useState(null);
+  const [appIsReady, setAppIsReady] = useState(false);
 
-  // Prevent the splash screen from auto-hiding until the app is ready
+  // Initialize app
   useEffect(() => {
-    SplashScreen.preventAutoHideAsync().catch(console.warn);
+    async function prepare() {
+      try {
+        // Keep the splash screen visible while we fetch resources
+        await SplashScreen.preventAutoHideAsync();
+
+        // Pre-load fonts, make API calls, etc.
+        // Add any initialization logic here
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Give time for resources to load
+
+        // Tell the application to render
+        setAppIsReady(true);
+      } catch (e) {
+        console.warn(e);
+        setError('Error initializing app');
+      }
+    }
+
+    prepare();
   }, []);
+
+  // Handle app ready state
+  useEffect(() => {
+    if (appIsReady) {
+      // This tells the splash screen to hide immediately
+      // If we call this after `setAppIsReady`, then we may see a blank screen while the app is loading its initial state
+      // This is also why we have a loading fallback component below
+      SplashScreen.hideAsync().catch(console.warn);
+    }
+  }, [appIsReady]);
+=======
 
   // Ignorar advertencias específicas que pueden ser problemáticas en Android
   useEffect(() => {
@@ -169,11 +199,15 @@ export default function App() {  const [error, setError] = useState(null);
       <LanguageProvider>
         <ThemeProvider>
         <FavoriteContextProvider>
-          <Toast />          <NavigationContainer
-            fallback={<Text>Cargando...</Text>}
-            onReady={() => { 
-              SplashScreen.hideAsync().catch(console.warn);
-              console.log(`Navigation ready`);
+          <NavigationContainer
+            fallback={
+              <View style={styles.loadingScreen}>
+                <ActivityIndicator size="large" color="#6a51ae" />
+                <Text style={styles.loadingText}>Cargando...</Text>
+              </View>
+            }
+            onReady={() => {
+              console.log('Navigation ready');
             }}
           >
             <TabNavigator />
