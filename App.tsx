@@ -3,7 +3,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StyleSheet, LogBox, Platform, Text, View } from 'react-native';
+import { StyleSheet, LogBox, Platform, Text, View, ActivityIndicator } from 'react-native';
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toast from 'react-native-toast-message';
 import { Ionicons } from '@expo/vector-icons';
@@ -54,7 +54,7 @@ function TabNavigator() {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
+          let iconName = '';
           if (route.name === 'HomeTab') {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'BibleTab') {
@@ -62,7 +62,7 @@ function TabNavigator() {
           } else if (route.name === 'FavoritesTab') {
             iconName = focused ? 'heart' : 'heart-outline';
           }
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return <Ionicons name={iconName as any} size={size} color={color} />;
         },
         tabBarActiveTintColor: '#6a51ae',
         tabBarInactiveTintColor: 'gray',
@@ -87,7 +87,7 @@ function TabNavigator() {
 }
 
 export default function App() {
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [appIsReady, setAppIsReady] = useState(false);
 
   // Initialize app
@@ -121,7 +121,6 @@ export default function App() {
       SplashScreen.hideAsync().catch(console.warn);
     }
   }, [appIsReady]);
-=======
 
   // Ignorar advertencias específicas que pueden ser problemáticas en Android
   useEffect(() => {
@@ -136,7 +135,7 @@ export default function App() {
   }, []);
 
   // Función de captura de errores global mejorada
-  const handleError = (error, isFatal) => {
+  const handleError = (error: Error, isFatal: boolean) => {
     console.log('Error capturado:', error);
     
     if (isFatal) {
@@ -160,10 +159,10 @@ export default function App() {
     try {
       if (Platform.OS === 'android') {
         // Código para manejar errores en Android
-        const ErrorUtils = global.ErrorUtils;
+        const ErrorUtils = (global as any).ErrorUtils;
         if (ErrorUtils) {
           const originalHandler = ErrorUtils.getGlobalHandler();
-          ErrorUtils.setGlobalHandler((error, isFatal) => {
+          ErrorUtils.setGlobalHandler((error: Error, isFatal: boolean) => {
             handleError(error, isFatal);
             // Llamar al manejador original solo si no es fatal
             if (!isFatal && originalHandler) {
@@ -171,7 +170,8 @@ export default function App() {
             }
           });
         }
-      }      return () => {
+      }
+      return () => {
         // Limpieza en desmontaje (restaurar manejador original si es necesario)
       };
     } catch (e) {
@@ -190,29 +190,28 @@ export default function App() {
         </View>
       </SafeAreaProvider>
     );
-  }  // Hide the splash screen once the app is ready  
-
-  // Pantalla de carga mientras se inicializa todo  
+  }
 
   return (
     <SafeAreaProvider style={styles.container}>
       <LanguageProvider>
         <ThemeProvider>
-        <FavoriteContextProvider>
-          <NavigationContainer
-            fallback={
-              <View style={styles.loadingScreen}>
-                <ActivityIndicator size="large" color="#6a51ae" />
-                <Text style={styles.loadingText}>Cargando...</Text>
-              </View>
-            }
-            onReady={() => {
-              console.log('Navigation ready');
-            }}
-          >
-            <TabNavigator />
-          </NavigationContainer>
-        </FavoriteContextProvider>      </ThemeProvider>
+          <FavoriteContextProvider>
+            <NavigationContainer
+              fallback={
+                <View style={styles.loadingScreen}>
+                  <ActivityIndicator size="large" color="#6a51ae" />
+                  <Text style={styles.loadingText}>Cargando...</Text>
+                </View>
+              }
+              onReady={() => {
+                console.log('Navigation ready');
+              }}
+            >
+              <TabNavigator />
+            </NavigationContainer>
+          </FavoriteContextProvider>
+        </ThemeProvider>
       </LanguageProvider>
     </SafeAreaProvider>
   );
