@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DebugLogger from './services/DebugLogger';
 import ErrorBoundary from './components/ErrorBoundary';
+import { LanguageProvider } from './contexts/LanguageContext';
 
 // Import your screens
 import HomeScreen from './screens/HomeScreen';
@@ -28,12 +29,14 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <NavigationContainer>
+      <LanguageProvider>
+        <NavigationContainer>
         <Stack.Navigator>
         <Stack.Screen name="Home" component={HomeScreen} />
         {/* Add other screens here */}
         </Stack.Navigator>
-      </NavigationContainer>
+        </NavigationContainer>
+      </LanguageProvider>
     </ErrorBoundary>
   );
 }

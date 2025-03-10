@@ -27,8 +27,12 @@ class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <View style={styles.container}>
-          <Text style={styles.text}>Lo sentimos, ha ocurrido un error.</Text>
-          <Text style={styles.subText}>Por favor, reinicie la aplicación.</Text>
+          <Text style={styles.text}>Lo sentimos, ha ocurrido un error inesperado.</Text>
+          <Text style={styles.subText}>Por favor, intente lo siguiente:</Text>
+          <Text style={styles.bullet}>• Cierre completamente la aplicación</Text>
+          <Text style={styles.bullet}>• Verifique su conexión a internet</Text>
+          <Text style={styles.bullet}>• Vuelva a abrir la aplicación</Text>
+          <Text style={styles.note}>Si el problema persiste, por favor contacte con soporte.</Text>
         </View>
       );
     }
@@ -43,17 +47,36 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+    backgroundColor: '#fff',
   },
   text: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: 20,
+    color: '#E53935',
   },
   subText: {
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: '600',
     textAlign: 'center',
+    marginBottom: 15,
+    color: '#333',
+  },
+  bullet: {
+    fontSize: 16,
+    textAlign: 'left',
     color: '#666',
+    marginBottom: 8,
+    width: '100%',
+    paddingLeft: 40,
+  },
+  note: {
+    fontSize: 14,
+    textAlign: 'center',
+    color: '#888',
+    marginTop: 20,
+    fontStyle: 'italic',
   },
 });
 
